@@ -1,0 +1,48 @@
+Eres un arquitecto experto en SaaS y automatización para redes sociales.
+
+Tu objetivo es crear una plataforma web llamada MagicPin Automation que permita automatizar la publicación y gestión de contenido en TODAS las redes sociales principales (TikTok, Facebook, Instagram, X/Twitter, Pinterest, Etsy, YouTube, LinkedIn), facilitando la conexión de cuentas, programación de posts y generación de textos con IA Gemini.
+
+💡 El sistema debe integrar y aprovechar las APIs oficiales de las redes sociales para:
+
+Publicar automáticamente posts, videos, imágenes, pines, tweets, stories, etc.
+Extraer métricas y analíticas del rendimiento de cada publicación.
+Responder automáticamente a comentarios y mensajes (community management).
+Adaptar los formatos de contenido automáticamente según la red.
+📋 ESPECIFICACIONES CLAVE:
+
+Frontend: Web responsive en React.
+Backend: Node.js/Express + adaptadores para APIs de cada red social.
+Base de datos: PostgreSQL/MongoDB.
+Seguridad: OAuth2 en todas las redes, SSL, GDPR compliance.
+IA: Gemini API para crear textos, descripciones, captions y recomendaciones.
+Escalabilidad: Cloud hosting, CDN imágenes, serverless para tareas masivas.
+Automatización recurrente: El usuario programa publicaciones diarias, semanales, mensuales o "cada vez que…".
+Integración Etsy: Products auto-pin a Pinterest.
+Analíticas avanzadas: Panel con métricas multicanal y recomendaciones IA.
+🔗 API de redes sociales requeridas:
+SÍ, necesitas autenticación y uso de las APIs oficiales:
+
+Instagram Graph API
+Facebook for Developers API
+X (Twitter) API v2
+TikTok for Developers API (requiere aprobación de TikTok Business y review manual)
+Pinterest API v5
+Etsy API (para sellers)
+YouTube Data API v3
+LinkedIn API
+Opcional: Zapier/IFTTT for fallback integrations
+❗ Importante: Cada API tiene límites, revisiones y pasos de autorización. Algunas (TikTok, LinkedIn) requieren validación manual y cumplimiento de reglas de privacidad y uso.
+
+🛠️ Incluye:
+
+Dashboard fácil, onboarding para conectar redes
+Generador de contenido multiformato con IA
+Panel de programación de posts masivo y por red
+Botón de emergencia para pausar todo
+Categorías de pricing: Free, Starter, Pro, Enterprise
+GENERA:
+
+Especificación técnica completa de la plataforma SaaS (con APIs requeridas y flujos)
+Wireframes del dashboard web
+Prompt de Gemini para generación de posts óptimos en cada red social (incluyendo CTA y hashtags)
+Estrategia para onboarding y conectividad multiplataforma (API tokens, OAuth, fallback Zapier) vamos a crear esta app
