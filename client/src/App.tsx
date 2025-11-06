@@ -18,20 +18,7 @@ import Analytics from "@/pages/analytics";
 import Templates from "@/pages/templates";
 import Settings from "@/pages/settings";
 
-function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
+function Router({ isAuthenticated }: { isAuthenticated: boolean }) {
   return (
     <Switch>
       {!isAuthenticated ? (
@@ -52,8 +39,19 @@ function Router() {
   );
 }
 
-export default function App() {
+function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const style = {
     "--sidebar-width": "16rem",
@@ -61,33 +59,39 @@ export default function App() {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          {isLoading || !isAuthenticated ? (
-            <>
-              <Router />
-              <Toaster />
-            </>
-          ) : (
-            <SidebarProvider style={style as React.CSSProperties}>
-              <div className="flex h-screen w-full">
-                <AppSidebar />
-                <div className="flex flex-col flex-1 overflow-hidden">
-                  <header className="flex items-center justify-between p-4 border-b shrink-0">
-                    <SidebarTrigger data-testid="button-sidebar-toggle" />
-                    <ThemeToggle />
-                  </header>
-                  <main className="flex-1 overflow-hidden flex flex-col">
-                    <Router />
-                  </main>
-                </div>
+    <ThemeProvider defaultTheme="light">
+      <TooltipProvider>
+        {!isAuthenticated ? (
+          <>
+            <Router isAuthenticated={isAuthenticated} />
+            <Toaster />
+          </>
+        ) : (
+          <SidebarProvider style={style as React.CSSProperties}>
+            <div className="flex h-screen w-full">
+              <AppSidebar />
+              <div className="flex flex-col flex-1 overflow-hidden">
+                <header className="flex items-center justify-between p-4 border-b shrink-0">
+                  <SidebarTrigger data-testid="button-sidebar-toggle" />
+                  <ThemeToggle />
+                </header>
+                <main className="flex-1 overflow-hidden flex flex-col">
+                  <Router isAuthenticated={isAuthenticated} />
+                </main>
               </div>
-            </SidebarProvider>
-          )}
-          <Toaster />
-        </TooltipProvider>
-      </ThemeProvider>
+            </div>
+          </SidebarProvider>
+        )}
+        <Toaster />
+      </TooltipProvider>
+    </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
     </QueryClientProvider>
   );
 }
