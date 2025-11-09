@@ -28,17 +28,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    try {
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        setUser(firebaseUser);
-        setIsLoading(false);
-      });
-      return () => unsubscribe();
-    } catch (err) {
-      console.error("Firebase auth error:", err);
-      setError("Firebase authentication is not configured");
+    // Si `auth` no se inicializa (por ej. faltan variables de entorno),
+    // el objeto estará vacío. Este chequeo previene un error más críptico.
+    if (!auth || !auth.app) {
+      const errorMsg = "Firebase authentication is not configured. Check your environment variables.";
+      console.error(errorMsg);
+      setError(errorMsg);
       setIsLoading(false);
+      return; // Detiene la ejecución si Firebase no está configurado.
     }
+
+    // Si está configurado, procede a escuchar los cambios de autenticación.
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setIsLoading(false);
+    }, (error) => {
+      console.error("Firebase onAuthStateChanged error:", error);
+      setError("An error occurred during authentication.");
+      setIsLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {
