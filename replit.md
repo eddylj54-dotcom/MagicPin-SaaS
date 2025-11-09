@@ -43,8 +43,7 @@ Preferred communication style: Simple, everyday language.
 **Technology Stack:**
 - **Runtime**: Node.js with Express server
 - **Language**: TypeScript with ES modules
-- **Database ORM**: Drizzle ORM for type-safe database operations
-- **Session Management**: express-session with PostgreSQL store (connect-pg-simple)
+- **Persistence**: Firebase Admin SDK with Firestore (server-side)
 - **AI Integration**: Google Gemini AI SDK (@google/genai) for content generation
 
 **API Design Pattern:**
@@ -55,11 +54,10 @@ Preferred communication style: Simple, everyday language.
 - Error handling with appropriate HTTP status codes
 
 **Authentication Flow:**
-- OAuth2 via Replit Auth (OpenID Connect)
-- Session-based authentication with PostgreSQL-backed session store
-- Passport.js strategy for OIDC integration
-- Protected routes requiring authentication middleware
-- Automatic token refresh handling
+- Client authenticates via Firebase Auth (Google/Facebook providers)
+- ID tokens are sent with each request and verified with Firebase Admin
+- Protected routes share a reusable `isAuthenticated` middleware
+- Token refresh handled automatically by the Firebase client SDK
 
 **Content Generation Logic:**
 - Platform-specific content prompts tailored to each social network's character limits and best practices
@@ -69,10 +67,10 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Storage Solutions
 
-**Database**: PostgreSQL via Neon serverless driver
-- **ORM**: Drizzle with schema-first approach
-- **Connection**: WebSocket-based connection pooling for serverless compatibility
-- **Migrations**: Managed via drizzle-kit with schema definitions in `shared/schema.ts`
+**Database**: Firestore (Native mode)
+- **SDK**: Firebase Admin SDK for server-side access
+- **Structure**: Top-level collections for users, connected accounts, posts, templates and analytics
+- **Consistency**: ISO timestamps returned to the client for easier serialization
 
 **Schema Architecture:**
 
@@ -112,8 +110,8 @@ Preferred communication style: Simple, everyday language.
 ### External Dependencies
 
 **Authentication Service:**
-- **Replit Auth**: OpenID Connect provider for user authentication
-- Environment variables: `ISSUER_URL`, `REPL_ID`, `SESSION_SECRET`
+- **Firebase Auth**: Google/Facebook providers enabled
+- Environment variables: `FIREBASE_SERVICE_ACCOUNT_BASE64`, `FIREBASE_PROJECT_ID`, `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET`
 
 **AI Service:**
 - **Google Gemini AI**: Content generation for social media posts
@@ -121,9 +119,8 @@ Preferred communication style: Simple, everyday language.
 - Used for platform-specific caption, hashtag, and CTA generation
 
 **Database Service:**
-- **Neon PostgreSQL**: Serverless PostgreSQL database
-- Connection string: `DATABASE_URL` environment variable
-- WebSocket support for serverless environments
+- **Firebase Firestore**: NoSQL document database within the Firebase free tier
+- Credentials handled via Base64-encoded service account (`FIREBASE_SERVICE_ACCOUNT_BASE64`)
 
 **Social Media APIs** (Planned Integration):
 - Instagram Graph API - for posts, stories, and metrics

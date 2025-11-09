@@ -11,8 +11,21 @@ import {
 } from "lucide-react";
 import { SiInstagram, SiFacebook, SiX, SiPinterest, SiLinkedin, SiYoutube, SiTiktok } from "react-icons/si";
 import { ShoppingBag } from "lucide-react";
+import { useAuth } from "@/hooks/AuthContext.tsx";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa"; // Import Facebook icon
 
 export default function Landing() {
+  const { signInWithGoogle, signInWithFacebook } = useAuth();
+
+  const handleGoogleLogin = () => {
+    signInWithGoogle().catch(console.error);
+  };
+
+  const handleFacebookLogin = () => {
+    signInWithFacebook().catch(console.error);
+  };
+
   const platforms = [
     { icon: SiInstagram, name: "Instagram" },
     { icon: SiFacebook, name: "Facebook" },
@@ -92,9 +105,14 @@ export default function Landing() {
             </div>
             <span className="text-xl font-bold">MagicPin Automation</span>
           </div>
-          <Button asChild data-testid="button-login">
-            <a href="/api/login">Sign In</a>
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleGoogleLogin} data-testid="button-login-google">
+              <FcGoogle className="mr-2 h-4 w-4" /> Sign In with Google
+            </Button>
+            <Button onClick={handleFacebookLogin} data-testid="button-login-facebook">
+              <FaFacebook className="mr-2 h-4 w-4" /> Sign In with Facebook
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -115,8 +133,11 @@ export default function Landing() {
             Schedule posts, generate content with AI, and manage Instagram, Facebook, X, Pinterest, LinkedIn, YouTube, TikTok, and Etsy from one powerful dashboard.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <Button size="lg" asChild data-testid="button-get-started">
-              <a href="/api/login">Get Started Free</a>
+            <Button size="lg" onClick={handleGoogleLogin} data-testid="button-get-started-google">
+              Get Started Free with Google
+            </Button>
+            <Button size="lg" onClick={handleFacebookLogin} data-testid="button-get-started-facebook">
+              Get Started Free with Facebook
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="#features">Learn More</a>
@@ -193,10 +214,18 @@ export default function Landing() {
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? "default" : "outline"}
-                  asChild
+                  onClick={handleGoogleLogin}
                   data-testid={`button-plan-${plan.name.toLowerCase()}`}
                 >
-                  <a href="/api/login">Get Started</a>
+                  Get Started with Google
+                </Button>
+                <Button 
+                  className="w-full mt-2" 
+                  variant={plan.popular ? "default" : "outline"}
+                  onClick={handleFacebookLogin}
+                  data-testid={`button-plan-${plan.name.toLowerCase()}-facebook`}
+                >
+                  Get Started with Facebook
                 </Button>
               </Card>
             ))}
@@ -213,9 +242,14 @@ export default function Landing() {
           <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-8 text-lg">
             Join thousands of creators and businesses saving time with AI-powered automation
           </p>
-          <Button size="lg" variant="secondary" asChild data-testid="button-cta-start">
-            <a href="/api/login">Start Free Trial</a>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" onClick={handleGoogleLogin} data-testid="button-cta-start-google">
+              Start Free Trial with Google
+            </Button>
+            <Button size="lg" variant="secondary" onClick={handleFacebookLogin} data-testid="button-cta-start-facebook">
+              Start Free Trial with Facebook
+            </Button>
+          </div>
         </div>
       </section>
 

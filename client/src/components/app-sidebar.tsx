@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/AuthContext.tsx"; // Updated import
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
@@ -65,7 +65,11 @@ const menuItems = [
 
 export function AppSidebar() {
   const [location] = useLocation();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+
+  const handleLogout = () => {
+    signOut().catch(console.error);
+  };
 
   return (
     <Sidebar>
@@ -103,14 +107,14 @@ export function AppSidebar() {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.profileImageUrl || undefined} alt={user?.firstName || "User"} />
+              <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || "User"} />
               <AvatarFallback>
-                {user?.firstName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                {user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col min-w-0 flex-1">
               <span className="text-sm font-medium truncate">
-                {user?.firstName || user?.email || "User"}
+                {user?.displayName || "User"}
               </span>
               <span className="text-xs text-muted-foreground truncate">
                 {user?.email}
@@ -120,7 +124,7 @@ export function AppSidebar() {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => window.location.href = "/api/logout"}
+            onClick={handleLogout}
             data-testid="button-logout"
             className="shrink-0"
           >

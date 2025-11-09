@@ -1,19 +1,16 @@
-// Referenced from javascript_log_in_with_replit blueprint
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { isAuthenticated, type AuthenticatedRequest } from "./firebaseAuth";
 import { generateSocialMediaContent } from "./gemini";
 import { PLATFORMS } from "@shared/platforms";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
@@ -23,9 +20,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Connected Accounts routes
-  app.get("/api/accounts", isAuthenticated, async (req: any, res) => {
+  app.get("/api/accounts", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const accounts = await storage.getConnectedAccounts(userId);
       res.json(accounts);
     } catch (error) {
@@ -34,9 +31,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/accounts/connect", isAuthenticated, async (req: any, res) => {
+  app.post("/api/accounts/connect", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const { platform } = req.body;
 
       // Validate platform
@@ -71,7 +68,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/accounts/:id/disconnect", isAuthenticated, async (req: any, res) => {
+  app.post("/api/accounts/:id/disconnect", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
       const { id } = req.params;
       await storage.deleteConnectedAccount(id);
@@ -83,9 +80,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Posts routes
-  app.get("/api/posts", isAuthenticated, async (req: any, res) => {
+  app.get("/api/posts", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const posts = await storage.getPosts(userId);
       res.json(posts);
     } catch (error) {
@@ -94,9 +91,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/posts/recent", isAuthenticated, async (req: any, res) => {
+  app.get("/api/posts/recent", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const posts = await storage.getRecentPosts(userId, 10);
       res.json(posts);
     } catch (error) {
@@ -105,9 +102,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/posts", isAuthenticated, async (req: any, res) => {
+  app.post("/api/posts", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const { content, platforms, scheduledFor, mediaUrls, metadata } = req.body;
 
       // Validate input
@@ -143,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // AI Content Generation route
-  app.post("/api/ai/generate", isAuthenticated, async (req: any, res) => {
+  app.post("/api/ai/generate", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
       const { topic, tone, platforms } = req.body;
 
@@ -174,9 +171,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Templates routes
-  app.get("/api/templates", isAuthenticated, async (req: any, res) => {
+  app.get("/api/templates", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const templates = await storage.getTemplates(userId);
       res.json(templates);
     } catch (error) {
@@ -185,9 +182,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/templates", isAuthenticated, async (req: any, res) => {
+  app.post("/api/templates", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const { name, description, category, content, platforms, isPublic } = req.body;
 
       // Validate input
@@ -227,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/templates/:id/use", isAuthenticated, async (req: any, res) => {
+  app.post("/api/templates/:id/use", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
       const { id } = req.params;
       await storage.incrementTemplateUsage(id);
@@ -239,9 +236,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Analytics routes
-  app.get("/api/analytics", isAuthenticated, async (req: any, res) => {
+  app.get("/api/analytics", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.uid;
       const analytics = await storage.getAnalytics(userId);
       res.json(analytics);
     } catch (error) {

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PLATFORMS } from "@/lib/platforms";
 import { Sparkles, Copy, RefreshCw, Calendar, Loader2 } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function Generator() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [topic, setTopic] = useState("");
   const [tone, setTone] = useState("professional");
@@ -56,6 +57,30 @@ export default function Generator() {
     },
   });
 
+  const savePostMutation = useMutation({
+    mutationFn: async (postContent: { platform: string; content: string }) => {
+      return await apiRequest("POST", "/api/posts", {
+        content: postContent.content,
+        platforms: [postContent.platform],
+        status: "draft",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Post Saved",
+        description: "Your post has been saved as a draft.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Save Failed",
+        description: error.message || "Failed to save the post",
+        variant: "destructive",
+      });
+    },
+  });
+
   const togglePlatform = (platformId: string) => {
     setSelectedPlatforms(prev =>
       prev.includes(platformId)
@@ -82,6 +107,10 @@ export default function Generator() {
       return;
     }
     generateMutation.mutate();
+  };
+
+  const handleSavePost = (platform: string, content: string) => {
+    savePostMutation.mutate({ platform, content });
   };
 
   const copyToClipboard = (content: string) => {
@@ -275,8 +304,17 @@ export default function Generator() {
                             <Button variant="outline" className="flex-1" data-testid={`button-edit-${platformId}`}>
                               Edit Content
                             </Button>
-                            <Button className="flex-1" data-testid={`button-schedule-${platformId}`}>
-                              <Calendar className="h-4 w-4 mr-2" />
+                            <Button
+                              className="flex-1"
+                              data-testid={`button-schedule-${platformId}`}
+                              onClick={() => handleSavePost(platformId, content)}
+                              disabled={savePostMutation.isPending}
+                            >
+                              {savePostMutation.isPending ? (
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              ) : (
+                                <Calendar className="h-4 w-4 mr-2" />
+                              )}
                               Schedule Post
                             </Button>
                           </div>

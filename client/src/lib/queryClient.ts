@@ -1,54 +1,74 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { auth } from "./firebase"; // Import Firebase auth instance
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    throw new Error(`API Error: ${res.status} ${text}`);
   }
 }
 
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const res = await fetch(url, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+const buildAuthHeaders = async (initHeaders?: HeadersInit) => {
+  const headers = new Headers(initHeaders);
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const user = auth.currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  return headers;
+};
+
+export const apiRequest = async <TResponse = unknown>(
+  input: RequestInfo | URL,
+  init: RequestInit = {},
+): Promise<TResponse> => {
+  const headers = await buildAuthHeaders(init.headers);
+  const res = await fetch(input, {
+    ...init,
+    headers,
   });
 
+  if (res.status === 204) {
+    return undefined as TResponse;
+  }
+
   await throwIfResNotOk(res);
-  return res;
-}
+  return (await res.json()) as TResponse;
+};
 
-type UnauthorizedBehavior = "returnNull" | "throw";
-export const getQueryFn: <T>(options: {
-  on401: UnauthorizedBehavior;
-}) => QueryFunction<T> =
-  ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
-      credentials: "include",
-    });
+const defaultQueryFn: QueryFunction = async ({ queryKey }) => {
+  const url = queryKey.join("/");
+  const headers = await buildAuthHeaders();
+  const res = await fetch(url, { headers });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
-    }
+  // Handle case where user is unauthorized but there was no server error
+  if (res.status === 401) {
+    // Returning null is a common pattern in react-query for auth errors
+    // This allows components to handle the "logged out" state gracefully
+    return null;
+  }
 
-    await throwIfResNotOk(res);
-    return await res.json();
-  };
+  await throwIfResNotOk(res);
+  return res.json();
+};
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
+      queryFn: defaultQueryFn,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: (failureCount, error: any) => {
+        // Don't retry on auth-related errors
+        if (error.message?.includes("401")) {
+          return false;
+        }
+        return failureCount < 2;
+      },
     },
     mutations: {
       retry: false,
