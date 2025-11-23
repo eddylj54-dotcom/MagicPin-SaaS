@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "title": "MagicPin",
+    "subtitle1": "The AI-Powered Social Media Automation Platform.",
+    "subtitle2": "Stop Posting. Start Dominating.",
+    "button1": "Activate Finish Mode",
+    "button2": "Book a Demo"
+  },
+  "features": {
+    "title": "An Unfair Advantage for Social Media",
+    "subtitle": "MagicPin isn't just another tool. It's your AI co-pilot for dominating the social landscape.",
+    "items": {
+      "automation": {
+        "title": "AI-Powered Automation",
+        "description": "Leverage Gemini AI to generate, schedule, and optimize social media content across all your platforms, saving you hours every week."
+      },
+      "dashboard": {
+        "title": "Multi-Platform Dashboard",
+        "description": "Manage everything from a single, intuitive dashboard. No more switching between tabs to manage your online presence."
+      },
+      "analytics": {
+        "title": "Advanced Analytics",
+        "description": "Get a bird's-eye view of your performance. Track engagement, growth, and ROI with our easy-to-understand analytics."
+      },
+      "scheduling": {
+        "title": "Smart Scheduling",
+        "description": "Our AI finds the optimal time to post for maximum engagement, ensuring your content reaches the right audience at the right time."
+      },
+      "security": {
+        "title": "Secure & Reliable",
+        "description": "We use industry-standard OAuth for secure account connections, so your data is always safe and protected."
+      },
+      "collaboration": {
+        "title": "Team Collaboration",
+        "description": "Invite your team members to collaborate, manage workflows, and approve content before it goes live."
+      }
+    }
+  },
+  "navbar": {
+    "features": "Features",
+    "demo": "Demo",
+    "login": "Login"
+  }
+}

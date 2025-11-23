@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "title": "MagicPin",
+    "subtitle1": "La Plataforma de Automatización de Redes Sociales con IA.",
+    "subtitle2": "Deja de Publicar. Empieza a Dominar.",
+    "button1": "Activar Modo Final",
+    "button2": "Reservar una Demo"
+  },
+  "features": {
+    "title": "Una Ventaja Injusta para las Redes Sociales",
+    "subtitle": "MagicPin no es solo otra herramienta. Es tu copiloto de IA para dominar el panorama social.",
+    "items": {
+      "automation": {
+        "title": "Automatización con IA",
+        "description": "Aprovecha la IA de Gemini para generar, programar y optimizar contenido en todas tus plataformas, ahorrándote horas cada semana."
+      },
+      "dashboard": {
+        "title": "Panel Multiplataforma",
+        "description": "Gestiona todo desde un único e intuitivo panel. No más cambios de pestañas para gestionar tu presencia online."
+      },
+      "analytics": {
+        "title": "Análisis Avanzado",
+        "description": "Obtén una vista panorámica de tu rendimiento. Mide la interacción, el crecimiento y el ROI con nuestros análisis fáciles de entender."
+      },
+      "scheduling": {
+        "title": "Programación Inteligente",
+        "description": "Nuestra IA encuentra el momento óptimo para publicar y maximizar la interacción, asegurando que tu contenido llegue a la audiencia correcta en el momento adecuado."
+      },
+      "security": {
+        "title": "Seguro y Confiable",
+        "description": "Usamos OAuth estándar de la industria para conexiones de cuentas seguras, por lo que tus datos siempre están a salvo y protegidos."
+      },
+      "collaboration": {
+        "title": "Colaboración en Equipo",
+        "description": "Invita a los miembros de tu equipo a colaborar, gestionar flujos de trabajo y aprobar contenido antes de que se publique."
+      }
+    }
+  },
+  "navbar": {
+    "features": "Características",
+    "demo": "Demostración",
+    "login": "Iniciar Sesión"
+  }
+}
